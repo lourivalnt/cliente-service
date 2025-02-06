@@ -2,6 +2,7 @@ package com.clienteservice.controller;
 
 import com.clienteservice.dto.ClienteDTO;
 import com.clienteservice.mapper.ClienteMapper;
+import com.clienteservice.model.Cliente;
 import com.clienteservice.service.ClienteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -14,24 +15,25 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ClienteController {
     private final ClienteService clienteService;
-    private final ClienteMapper clienteMapper;
 
     @GetMapping
     public List<ClienteDTO> listarClientes() {
         return clienteService.listarClientes().stream()
-                .map(clienteMapper::toDTO)
+                .map(ClienteMapper.INSTANCE::toDTO) // Chamada direta ao mapper
                 .collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")
     public Optional<ClienteDTO> buscarClientePorId(@PathVariable Long id) {
         return clienteService.buscarClientePorId(id)
-                .map(clienteMapper::toDTO);
+                .map(ClienteMapper.INSTANCE::toDTO); // Chamada direta ao mapper
     }
 
     @PostMapping
     public ClienteDTO cadastrarCliente(@RequestBody ClienteDTO dto) {
-        return clienteMapper.toDTO(clienteService.cadastrarCliente(clienteMapper.toEntity(dto)));
+        Cliente cliente = ClienteMapper.INSTANCE.toEntity(dto); // Chamada direta ao mapper
+        Cliente clienteSalvo = clienteService.cadastrarCliente(cliente);
+        return ClienteMapper.INSTANCE.toDTO(clienteSalvo); // Chamada direta ao mapper
     }
 
     @DeleteMapping("/{id}")
