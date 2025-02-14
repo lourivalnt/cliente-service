@@ -7,13 +7,6 @@
         <option value="$PROJECT_DIR$/pom.xml" />
       </list>
     </option>
-    <option name="ignoredFiles">
-      <set>
-        <option value="$PROJECT_DIR$/email-app/pom.xml" />
-        <option value="$PROJECT_DIR$/repository/pom.xml" />
-        <option value="$PROJECT_DIR$/service/pom.xml" />
-      </set>
-    </option>
   </component>
   <component name="NullableNotNullManager">
     <option name="myDefaultNullable" value="org.jetbrains.annotations.Nullable" />
@@ -59,5 +52,5 @@
       </value>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_21" project-jdk-name="23" project-jdk-type="JavaSDK" />
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_23_PREVIEW" project-jdk-name="23" project-jdk-type="JavaSDK" />
 </project>

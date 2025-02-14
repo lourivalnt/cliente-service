@@ -9,4 +9,5 @@ public interface ClienteRepositoryPort {
     Optional<Cliente> buscarPorId(Long id);
     Cliente salvar(Cliente cliente);
     void excluir(Long id);
+    boolean existePorId(Long id);
 }

@@ -1,0 +1,10 @@
+/home/llinard/Dev/workspace/cliente-service/application/src/main/java/ClienteApplication.java
+/home/llinard/Dev/workspace/cliente-service/application/src/main/java/com/clienteservice/config/SwaggerConfig.java
+/home/llinard/Dev/workspace/cliente-service/application/src/main/java/com/clienteservice/controller/ClienteController.java
+/home/llinard/Dev/workspace/cliente-service/application/src/main/java/com/clienteservice/dto/ClienteDTO.java
+/home/llinard/Dev/workspace/cliente-service/application/src/main/java/com/clienteservice/dto/EnderecoDTO.java
+/home/llinard/Dev/workspace/cliente-service/application/src/main/java/com/clienteservice/exception/ErrorResponse.java
+/home/llinard/Dev/workspace/cliente-service/application/src/main/java/com/clienteservice/exception/GlobalExceptionHandler.java
+/home/llinard/Dev/workspace/cliente-service/application/src/main/java/com/clienteservice/mapper/ClienteMapper.java
+/home/llinard/Dev/workspace/cliente-service/application/src/main/java/com/clienteservice/mapper/ClienteRowMapper.java
+/home/llinard/Dev/workspace/cliente-service/application/src/main/java/com/clienteservice/repository/ClienteRepositoryAdapter.java

@@ -1,5 +1,6 @@
 package com.clienteservice.service;
 
+import com.clienteservice.exception.ClienteNaoEncontradoException;
 import com.clienteservice.model.Cliente;
 import com.clienteservice.ports.ClienteRepositoryPort;
 import lombok.RequiredArgsConstructor;
@@ -16,15 +17,22 @@ public class ClienteService {
         return clienteRepository.buscarTodos();
     }
 
-    public Optional<Cliente> buscarClientePorId(Long id) {
-        return clienteRepository.buscarPorId(id);
+    public Cliente buscarClientePorId(Long id) {
+        return clienteRepository.buscarPorId(id)
+                .orElseThrow(() -> new ClienteNaoEncontradoException(id));
     }
 
     public Cliente cadastrarCliente(Cliente cliente) {
+        // Aqui pode adicionar validações adicionais antes de salvar
         return clienteRepository.salvar(cliente);
     }
 
     public void excluirCliente(Long id) {
+        // Verifica se o cliente existe antes de tentar excluí-lo
+        if (!clienteRepository.existePorId(id)) {
+            throw new ClienteNaoEncontradoException(id);
+        }
         clienteRepository.excluir(id);
     }
+
 }

@@ -5,12 +5,14 @@ import com.clienteservice.dto.EnderecoDTO;
 import com.clienteservice.model.Cliente;
 import com.clienteservice.model.Endereco;
 import javax.annotation.processing.Generated;
+import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-02-06T22:58:15-0300",
+    date = "2025-02-14T16:32:04-0300",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 23.0.2 (Oracle Corporation)"
 )
+@Component
 public class ClienteMapperImpl implements ClienteMapper {
 
     @Override

@@ -144,6 +144,13 @@ public class ClienteRepositoryAdapter implements ClienteRepositoryPort {
         jdbcTemplate.update(sql, id);
     }
 
+    @Override
+    public boolean existePorId(Long id) {
+        String sql = "SELECT COUNT(*) FROM cliente WHERE id = ?";
+        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, id);
+        return count != null && count > 0;
+    }
+
     private ClienteDTO toDTO(Cliente cliente) {
         ClienteDTO dto = new ClienteDTO();
         dto.setId(cliente.getId());
