@@ -28,4 +28,7 @@ public class ClienteDTO {
 
     @Schema(description = "ID do endereço associado ao cliente", example = "1")
     private EnderecoDTO endereco;
+
+//    @Schema(description = "ID do endereço associado ao cliente", example = "1")
+//    private Long enderecoId; // Alterado para Long
 }

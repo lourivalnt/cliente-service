@@ -1,11 +1,11 @@
 com/clienteservice/config/SwaggerConfig.class
 com/clienteservice/mapper/ClienteMapper.class
+com/clienteservice/ClienteApplication.class
 com/clienteservice/controller/ClienteController.class
 com/clienteservice/dto/EnderecoDTO.class
 com/clienteservice/mapper/ClienteMapperImpl.class
 com/clienteservice/repository/ClienteRepositoryAdapter.class
 com/clienteservice/dto/ClienteDTO.class
 com/clienteservice/mapper/ClienteRowMapper.class
-ClienteApplication.class
 com/clienteservice/exception/ErrorResponse.class
 com/clienteservice/exception/GlobalExceptionHandler.class

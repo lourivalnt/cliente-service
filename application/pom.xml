@@ -21,6 +21,10 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.clienteservice</groupId>
             <artifactId>core</artifactId>
             <version>0.0.1-SNAPSHOT</version>
@@ -51,4 +55,17 @@
             <version>2.0.7</version>
         </dependency>
     </dependencies>
+    <build>
+        <plugins>
+            <!-- Spring Boot plugins -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>com.clienteservice.ClienteApplication</mainClass>
+                    <skip>false</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

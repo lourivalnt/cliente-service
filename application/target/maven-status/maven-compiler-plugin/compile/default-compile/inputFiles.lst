@@ -1,4 +1,4 @@
-/home/llinard/Dev/workspace/cliente-service/application/src/main/java/ClienteApplication.java
+/home/llinard/Dev/workspace/cliente-service/application/src/main/java/com/clienteservice/ClienteApplication.java
 /home/llinard/Dev/workspace/cliente-service/application/src/main/java/com/clienteservice/config/SwaggerConfig.java
 /home/llinard/Dev/workspace/cliente-service/application/src/main/java/com/clienteservice/controller/ClienteController.java
 /home/llinard/Dev/workspace/cliente-service/application/src/main/java/com/clienteservice/dto/ClienteDTO.java
