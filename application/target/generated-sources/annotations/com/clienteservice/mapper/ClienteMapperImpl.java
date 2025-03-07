@@ -9,29 +9,11 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-02-28T00:32:22-0300",
+    date = "2025-03-07T16:47:07-0300",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 23.0.2 (Oracle Corporation)"
 )
 @Component
 public class ClienteMapperImpl implements ClienteMapper {
-
-    @Override
-    public Cliente toEntity(ClienteDTO dto) {
-        if ( dto == null ) {
-            return null;
-        }
-
-        Cliente cliente = new Cliente();
-
-        cliente.setId( dto.getId() );
-        cliente.setNome( dto.getNome() );
-        cliente.setIdade( dto.getIdade() );
-        cliente.setCpf( dto.getCpf() );
-        cliente.setProfissao( dto.getProfissao() );
-        cliente.setEndereco( enderecoDTOToEndereco( dto.getEndereco() ) );
-
-        return cliente;
-    }
 
     @Override
     public ClienteDTO toDTO(Cliente cliente) {
@@ -39,16 +21,53 @@ public class ClienteMapperImpl implements ClienteMapper {
             return null;
         }
 
-        ClienteDTO clienteDTO = new ClienteDTO();
+        ClienteDTO.ClienteDTOBuilder clienteDTO = ClienteDTO.builder();
 
-        clienteDTO.setId( cliente.getId() );
-        clienteDTO.setNome( cliente.getNome() );
-        clienteDTO.setIdade( cliente.getIdade() );
-        clienteDTO.setCpf( cliente.getCpf() );
-        clienteDTO.setProfissao( cliente.getProfissao() );
-        clienteDTO.setEndereco( enderecoToEnderecoDTO( cliente.getEndereco() ) );
+        clienteDTO.id( cliente.getId() );
+        clienteDTO.nome( cliente.getNome() );
+        clienteDTO.idade( cliente.getIdade() );
+        clienteDTO.cpf( cliente.getCpf() );
+        clienteDTO.profissao( cliente.getProfissao() );
+        clienteDTO.endereco( enderecoToEnderecoDTO( cliente.getEndereco() ) );
 
-        return clienteDTO;
+        return clienteDTO.build();
+    }
+
+    @Override
+    public Cliente toEntity(ClienteDTO dto) {
+        if ( dto == null ) {
+            return null;
+        }
+
+        Cliente.ClienteBuilder cliente = Cliente.builder();
+
+        cliente.id( dto.getId() );
+        cliente.nome( dto.getNome() );
+        cliente.idade( dto.getIdade() );
+        cliente.cpf( dto.getCpf() );
+        cliente.profissao( dto.getProfissao() );
+        cliente.endereco( enderecoDTOToEndereco( dto.getEndereco() ) );
+
+        return cliente.build();
+    }
+
+    protected EnderecoDTO enderecoToEnderecoDTO(Endereco endereco) {
+        if ( endereco == null ) {
+            return null;
+        }
+
+        EnderecoDTO.EnderecoDTOBuilder enderecoDTO = EnderecoDTO.builder();
+
+        enderecoDTO.id( endereco.getId() );
+        enderecoDTO.cep( endereco.getCep() );
+        enderecoDTO.rua( endereco.getRua() );
+        enderecoDTO.numero( endereco.getNumero() );
+        enderecoDTO.bairro( endereco.getBairro() );
+        enderecoDTO.complemento( endereco.getComplemento() );
+        enderecoDTO.cidade( endereco.getCidade() );
+        enderecoDTO.uf( endereco.getUf() );
+
+        return enderecoDTO.build();
     }
 
     protected Endereco enderecoDTOToEndereco(EnderecoDTO enderecoDTO) {
@@ -68,24 +87,5 @@ public class ClienteMapperImpl implements ClienteMapper {
         endereco.setUf( enderecoDTO.getUf() );
 
         return endereco;
-    }
-
-    protected EnderecoDTO enderecoToEnderecoDTO(Endereco endereco) {
-        if ( endereco == null ) {
-            return null;
-        }
-
-        EnderecoDTO enderecoDTO = new EnderecoDTO();
-
-        enderecoDTO.setId( endereco.getId() );
-        enderecoDTO.setCep( endereco.getCep() );
-        enderecoDTO.setRua( endereco.getRua() );
-        enderecoDTO.setNumero( endereco.getNumero() );
-        enderecoDTO.setBairro( endereco.getBairro() );
-        enderecoDTO.setComplemento( endereco.getComplemento() );
-        enderecoDTO.setCidade( endereco.getCidade() );
-        enderecoDTO.setUf( endereco.getUf() );
-
-        return enderecoDTO;
     }
 }

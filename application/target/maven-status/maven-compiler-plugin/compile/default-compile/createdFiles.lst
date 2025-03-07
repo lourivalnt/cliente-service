@@ -1,11 +1,17 @@
+com/clienteservice/repository/ClienteCacheDecorator.class
 com/clienteservice/config/SwaggerConfig.class
 com/clienteservice/mapper/ClienteMapper.class
+com/clienteservice/config/RedisConfig.class
 com/clienteservice/ClienteApplication.class
 com/clienteservice/controller/ClienteController.class
 com/clienteservice/dto/EnderecoDTO.class
+com/clienteservice/dto/EnderecoDTO$EnderecoDTOBuilder.class
+com/clienteservice/dto/ClienteDTO$ClienteDTOBuilder.class
 com/clienteservice/mapper/ClienteMapperImpl.class
 com/clienteservice/repository/ClienteRepositoryAdapter.class
 com/clienteservice/dto/ClienteDTO.class
 com/clienteservice/mapper/ClienteRowMapper.class
+com/clienteservice/config/ClienteConfig.class
+com/clienteservice/repository/ClienteRedisAdapter.class
 com/clienteservice/exception/ErrorResponse.class
 com/clienteservice/exception/GlobalExceptionHandler.class

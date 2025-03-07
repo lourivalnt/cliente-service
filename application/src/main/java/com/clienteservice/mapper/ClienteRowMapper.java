@@ -8,28 +8,45 @@ import org.springframework.stereotype.Component;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Vantagens da Refatoração
+ *
+ * <h2>Legibilidade</h2>
+ * O código é mais conciso e fácil de entender.
+ * A construção dos objetos é feita de forma fluente.
+ *
+ * <h2>Manutenção</h2>
+ * Adicionar/remover campos nos DTOs é mais simples com o construtor.
+ * Reduza o risco de erros ao definir campos manualmente.
+ *
+ * <h2>Padrão de Projeto</h2>
+ * Segue o Builder Pattern , que é recomendado para objetos complexos.
+ */
 @Component
 public class ClienteRowMapper implements RowMapper<ClienteDTO> {
+
     @Override
     public ClienteDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
-        EnderecoDTO enderecoDTO = new EnderecoDTO();
-        enderecoDTO.setId(rs.getLong("endereco_id"));
-        enderecoDTO.setCep(rs.getString("endereco_cep"));
-        enderecoDTO.setRua(rs.getString("endereco_rua"));
-        enderecoDTO.setNumero(rs.getString("endereco_numero"));
-        enderecoDTO.setBairro(rs.getString("endereco_bairro"));
-        enderecoDTO.setComplemento(rs.getString("endereco_complemento"));
-        enderecoDTO.setCidade(rs.getString("endereco_cidade"));
-        enderecoDTO.setUf(rs.getString("endereco_uf"));
+        // Cria EnderecoDTO usando Builder
+        EnderecoDTO enderecoDTO = EnderecoDTO.builder()
+                .id(rs.getLong("endereco_id"))
+                .cep(rs.getString("endereco_cep"))
+                .rua(rs.getString("endereco_rua"))
+                .numero(rs.getString("endereco_numero"))
+                .bairro(rs.getString("endereco_bairro"))
+                .complemento(rs.getString("endereco_complemento"))
+                .cidade(rs.getString("endereco_cidade"))
+                .uf(rs.getString("endereco_uf"))
+                .build();
 
-        ClienteDTO clienteDTO = new ClienteDTO();
-        clienteDTO.setId(rs.getLong("cliente_id"));
-        clienteDTO.setNome(rs.getString("cliente_nome"));
-        clienteDTO.setIdade(rs.getInt("cliente_idade"));
-        clienteDTO.setCpf(rs.getString("cliente_cpf"));
-        clienteDTO.setProfissao(rs.getString("cliente_profissao"));
-        clienteDTO.setEndereco(enderecoDTO);
-
-        return clienteDTO;
+        // Cria ClienteDTO usando Builder
+        return ClienteDTO.builder()
+                .id(rs.getLong("cliente_id"))
+                .nome(rs.getString("cliente_nome"))
+                .idade(rs.getInt("cliente_idade"))
+                .cpf(rs.getString("cliente_cpf"))
+                .profissao(rs.getString("cliente_profissao"))
+                .endereco(enderecoDTO)
+                .build();
     }
 }

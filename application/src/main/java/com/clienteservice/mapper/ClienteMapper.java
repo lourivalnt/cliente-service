@@ -9,7 +9,6 @@ import org.mapstruct.factory.Mappers;
 public interface ClienteMapper {
     ClienteMapper INSTANCE = Mappers.getMapper(ClienteMapper.class);
 
-    Cliente toEntity(ClienteDTO dto);
-
-    ClienteDTO toDTO(Cliente cliente);
+    ClienteDTO toDTO(Cliente cliente); // Converte entidade para DTO
+    Cliente toEntity(ClienteDTO dto); // Converte DTO para entidade
 }

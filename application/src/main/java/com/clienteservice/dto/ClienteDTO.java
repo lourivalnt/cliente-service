@@ -9,6 +9,7 @@ import lombok.*;
 @Data
 @NoArgsConstructor // Construtor sem argumentos
 @AllArgsConstructor // Construtor com todos os argumentos
+@Builder
 public class ClienteDTO {
     private Long id;
     @NotBlank(message = "O nome é obrigatório")

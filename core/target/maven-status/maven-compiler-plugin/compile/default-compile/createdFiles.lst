@@ -1,6 +1,8 @@
 com/clienteservice/model/Endereco.class
 com/clienteservice/exception/ClienteNaoEncontradoException.class
-com/clienteservice/model/Cliente.class
-com/clienteservice/exception/NegocioException.class
+com/clienteservice/ports/ClienteCachePort.class
+com/clienteservice/model/Cliente$ClienteBuilder.class
 com/clienteservice/ports/ClienteRepositoryPort.class
 com/clienteservice/service/ClienteService.class
+com/clienteservice/model/Cliente.class
+com/clienteservice/exception/NegocioException.class
