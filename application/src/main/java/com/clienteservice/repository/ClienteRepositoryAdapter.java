@@ -7,6 +7,9 @@ import com.clienteservice.model.Endereco;
 import com.clienteservice.ports.ClienteRepositoryPort;
 import com.clienteservice.mapper.ClienteRowMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import java.util.List;
@@ -51,6 +54,7 @@ public class ClienteRepositoryAdapter implements ClienteRepositoryPort {
 
 
     @Override
+    @Cacheable(value = "clientes", key = "#id") // Busca no cache antes de acessar o banco
     public Optional<Cliente> buscarPorId(Long id) {
         String sql = """
             SELECT 
@@ -85,6 +89,7 @@ public class ClienteRepositoryAdapter implements ClienteRepositoryPort {
     }
 
     @Override
+    @CachePut(value = "clientes", key = "#cliente.id") // Atualiza o cache após salvar
     public Cliente salvar(Cliente cliente) {
         ClienteDTO dto = toDTO(cliente);
         if (dto.getId() == null) {
@@ -139,6 +144,7 @@ public class ClienteRepositoryAdapter implements ClienteRepositoryPort {
     }
 
     @Override
+    @CacheEvict(value = "clientes", key = "#id") // Remove do cache após excluir
     public void excluir(Long id) {
         String sql = "DELETE FROM cliente WHERE id = ?";
         jdbcTemplate.update(sql, id);

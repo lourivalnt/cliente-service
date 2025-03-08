@@ -1,7 +1,3 @@
-Aqui está o **README atualizado** para refletir as mudanças no projeto, incluindo a integração do Redis, uso de DTOs e mapeamento com Lombok/MapStruct:
-
----
-
 # Cliente Service
 
 API RESTful para gerenciar clientes e endereços, seguindo uma arquitetura hexagonal (Ports and Adapters) com **cache via Redis**.
