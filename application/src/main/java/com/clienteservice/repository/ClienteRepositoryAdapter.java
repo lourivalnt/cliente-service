@@ -54,7 +54,7 @@ public class ClienteRepositoryAdapter implements ClienteRepositoryPort {
 
 
     @Override
-    @Cacheable(value = "clientes", key = "#id") // Busca no cache antes de acessar o banco
+    @Cacheable(value = "clientes", key = "'cliente:' + #id") // Chave no formato cliente:1
     public Optional<Cliente> buscarPorId(Long id) {
         String sql = """
             SELECT 
@@ -144,7 +144,7 @@ public class ClienteRepositoryAdapter implements ClienteRepositoryPort {
     }
 
     @Override
-    @CacheEvict(value = "clientes", key = "#id") // Remove do cache após excluir
+    @CacheEvict(value = "clientes", key = "'cliente:' + #id") // Remove a chave cliente:1
     public void excluir(Long id) {
         String sql = "DELETE FROM cliente WHERE id = ?";
         jdbcTemplate.update(sql, id);
