@@ -2,8 +2,10 @@ package com.clienteservice.repository;
 
 import com.clienteservice.dto.ClienteDTO;
 import com.clienteservice.dto.EnderecoDTO;
+import com.clienteservice.mapper.ClienteMapper;
 import com.clienteservice.model.Cliente;
 import com.clienteservice.model.Endereco;
+import com.clienteservice.model.PaginationResponse;
 import com.clienteservice.ports.ClienteRepositoryPort;
 import com.clienteservice.mapper.ClienteRowMapper;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +23,9 @@ import java.util.stream.Collectors;
 public class ClienteRepositoryAdapter implements ClienteRepositoryPort {
     private final JdbcTemplate jdbcTemplate;
     private final ClienteRowMapper clienteRowMapper;
+    private final ClienteMapper clienteMapper;
 
+    // Método original (sem paginação)
     @Override
     public List<Cliente> buscarTodos() {
         String sql = """
@@ -46,15 +50,76 @@ public class ClienteRepositoryAdapter implements ClienteRepositoryPort {
             ON 
                 c.endereco_id = e.id
             """;
-        List<ClienteDTO> clienteDTOs = jdbcTemplate.query(sql, clienteRowMapper);
-        return clienteDTOs.stream()
-                .map(this::toEntity)
+        List<ClienteDTO> dtos = jdbcTemplate.query(sql, clienteRowMapper);
+        return dtos.stream()
+                .map(clienteMapper::toEntity)
                 .collect(Collectors.toList());
     }
 
-
+    // Método com paginação
     @Override
-    @Cacheable(value = "clientes", key = "'cliente:' + #id") // Chave no formato cliente:1
+    public PaginationResponse<Cliente> listarClientesComPaginacao(int page, int pageSize, String sortBy, boolean ascending) {
+        // Calcula offset
+        int offset = page * pageSize;
+
+        // Query com paginação
+        String sql = """
+            SELECT 
+                c.id AS cliente_id, 
+                c.nome AS cliente_nome, 
+                c.idade AS cliente_idade, 
+                c.cpf AS cliente_cpf, 
+                c.profissao AS cliente_profissao, 
+                e.id AS endereco_id, 
+                e.cep AS endereco_cep, 
+                e.rua AS endereco_rua, 
+                e.numero AS endereco_numero, 
+                e.bairro AS endereco_bairro, 
+                e.complemento AS endereco_complemento, 
+                e.cidade AS endereco_cidade, 
+                e.uf AS endereco_uf 
+            FROM 
+                cliente c 
+            JOIN 
+                endereco e 
+            ON 
+                c.endereco_id = e.id
+            ORDER BY 
+                %s %s
+            LIMIT 
+                %d
+            OFFSET 
+                %d
+            """.formatted(
+                sortBy,
+                ascending ? "ASC" : "DESC",
+                pageSize,
+                offset
+        );
+
+        // Busca dados paginados
+        List<ClienteDTO> dtosPaginados = jdbcTemplate.query(sql, clienteRowMapper);
+        List<Cliente> clientes = dtosPaginados.stream()
+                .map(clienteMapper::toEntity)
+                .toList();
+
+        // Contagem total de elementos
+        Integer totalElements = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM cliente", Integer.class);
+        int totalPages = (int) Math.ceil((double) totalElements / pageSize);
+
+        return PaginationResponse.<Cliente>builder()
+                .content(clientes)
+                .totalPages(totalPages)
+                .totalElements(totalElements)
+                .currentPage(page)
+                .pageSize(pageSize)
+                .build();
+    }
+
+
+    // Buscar por ID (com cache)
+    @Override
+    @Cacheable(value = "clientes", key = "'cliente:' + #id")
     public Optional<Cliente> buscarPorId(Long id) {
         String sql = """
             SELECT 
@@ -82,18 +147,19 @@ public class ClienteRepositoryAdapter implements ClienteRepositoryPort {
             """;
         return jdbcTemplate.query(sql, new Object[]{id}, rs -> {
             if (rs.next()) {
-                return Optional.of(toEntity(clienteRowMapper.mapRow(rs, 1)));
+                ClienteDTO dto = clienteRowMapper.mapRow(rs, 1);
+                return Optional.of(clienteMapper.toEntity(dto));
             }
             return Optional.empty();
         });
     }
 
     @Override
-    @CachePut(value = "clientes", key = "#cliente.id") // Atualiza o cache após salvar
+    @CachePut(value = "clientes", key = "'cliente:' + #cliente.id")
     public Cliente salvar(Cliente cliente) {
-        ClienteDTO dto = toDTO(cliente);
+        ClienteDTO dto = clienteMapper.toDTO(cliente);
         if (dto.getId() == null) {
-            // Inserir novo cliente
+            // Insere novo cliente
             String sqlEndereco = "INSERT INTO endereco (cep, rua, numero, bairro, complemento, cidade, uf) VALUES (?, ?, ?, ?, ?, ?, ?)";
             jdbcTemplate.update(sqlEndereco,
                     dto.getEndereco().getCep(),
@@ -104,7 +170,6 @@ public class ClienteRepositoryAdapter implements ClienteRepositoryPort {
                     dto.getEndereco().getCidade(),
                     dto.getEndereco().getUf());
 
-            // Recuperar o ID do endereço inserido
             Long enderecoId = jdbcTemplate.queryForObject("SELECT LASTVAL()", Long.class);
 
             String sqlCliente = "INSERT INTO cliente (nome, idade, cpf, profissao, endereco_id) VALUES (?, ?, ?, ?, ?)";
@@ -115,11 +180,11 @@ public class ClienteRepositoryAdapter implements ClienteRepositoryPort {
                     dto.getProfissao(),
                     enderecoId);
 
-            // Recuperar o ID do cliente inserido
             Long clienteId = jdbcTemplate.queryForObject("SELECT LASTVAL()", Long.class);
+            dto.setId(clienteId);
             cliente.setId(clienteId);
         } else {
-            // Atualizar cliente existente
+            // Atualiza cliente existente
             String sqlEndereco = "UPDATE endereco SET cep = ?, rua = ?, numero = ?, bairro = ?, complemento = ?, cidade = ?, uf = ? WHERE id = ?";
             jdbcTemplate.update(sqlEndereco,
                     dto.getEndereco().getCep(),
@@ -157,47 +222,4 @@ public class ClienteRepositoryAdapter implements ClienteRepositoryPort {
         return count != null && count > 0;
     }
 
-    private ClienteDTO toDTO(Cliente cliente) {
-        ClienteDTO dto = new ClienteDTO();
-        dto.setId(cliente.getId());
-        dto.setNome(cliente.getNome());
-        dto.setIdade(cliente.getIdade());
-        dto.setCpf(cliente.getCpf());
-        dto.setProfissao(cliente.getProfissao());
-
-        EnderecoDTO enderecoDTO = new EnderecoDTO();
-        enderecoDTO.setId(cliente.getEndereco().getId());
-        enderecoDTO.setCep(cliente.getEndereco().getCep());
-        enderecoDTO.setRua(cliente.getEndereco().getRua());
-        enderecoDTO.setNumero(cliente.getEndereco().getNumero());
-        enderecoDTO.setBairro(cliente.getEndereco().getBairro());
-        enderecoDTO.setComplemento(cliente.getEndereco().getComplemento());
-        enderecoDTO.setCidade(cliente.getEndereco().getCidade());
-        enderecoDTO.setUf(cliente.getEndereco().getUf());
-
-        dto.setEndereco(enderecoDTO);
-        return dto;
-    }
-
-    private Cliente toEntity(ClienteDTO dto) {
-        Cliente cliente = new Cliente();
-        cliente.setId(dto.getId());
-        cliente.setNome(dto.getNome());
-        cliente.setIdade(dto.getIdade());
-        cliente.setCpf(dto.getCpf());
-        cliente.setProfissao(dto.getProfissao());
-
-        Endereco endereco = new Endereco();
-        endereco.setId(dto.getEndereco().getId());
-        endereco.setCep(dto.getEndereco().getCep());
-        endereco.setRua(dto.getEndereco().getRua());
-        endereco.setNumero(dto.getEndereco().getNumero());
-        endereco.setBairro(dto.getEndereco().getBairro());
-        endereco.setComplemento(dto.getEndereco().getComplemento());
-        endereco.setCidade(dto.getEndereco().getCidade());
-        endereco.setUf(dto.getEndereco().getUf());
-
-        cliente.setEndereco(endereco);
-        return cliente;
-    }
 }

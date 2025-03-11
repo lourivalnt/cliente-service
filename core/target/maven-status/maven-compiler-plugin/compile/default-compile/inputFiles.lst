@@ -2,5 +2,7 @@
 /home/llinard/Dev/workspace/cliente-service/core/src/main/java/com/clienteservice/exception/NegocioException.java
 /home/llinard/Dev/workspace/cliente-service/core/src/main/java/com/clienteservice/model/Cliente.java
 /home/llinard/Dev/workspace/cliente-service/core/src/main/java/com/clienteservice/model/Endereco.java
+/home/llinard/Dev/workspace/cliente-service/core/src/main/java/com/clienteservice/model/PaginationRequest.java
+/home/llinard/Dev/workspace/cliente-service/core/src/main/java/com/clienteservice/model/PaginationResponse.java
 /home/llinard/Dev/workspace/cliente-service/core/src/main/java/com/clienteservice/ports/ClienteRepositoryPort.java
 /home/llinard/Dev/workspace/cliente-service/core/src/main/java/com/clienteservice/service/ClienteService.java

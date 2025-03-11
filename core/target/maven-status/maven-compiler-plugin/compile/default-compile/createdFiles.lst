@@ -1,7 +1,11 @@
+com/clienteservice/model/PaginationResponse.class
 com/clienteservice/model/Endereco.class
 com/clienteservice/exception/ClienteNaoEncontradoException.class
+com/clienteservice/model/PaginationRequest$PaginationRequestBuilder.class
 com/clienteservice/model/Cliente$ClienteBuilder.class
+com/clienteservice/model/PaginationRequest.class
 com/clienteservice/ports/ClienteRepositoryPort.class
 com/clienteservice/service/ClienteService.class
+com/clienteservice/model/PaginationResponse$PaginationResponseBuilder.class
 com/clienteservice/model/Cliente.class
 com/clienteservice/exception/NegocioException.class

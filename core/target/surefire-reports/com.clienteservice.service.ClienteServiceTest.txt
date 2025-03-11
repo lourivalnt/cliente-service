@@ -1,4 +1,11 @@
 -------------------------------------------------------------------------------
 Test set: com.clienteservice.service.ClienteServiceTest
 -------------------------------------------------------------------------------
-Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.775 s -- in com.clienteservice.service.ClienteServiceTest
+Tests run: 6, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 1.944 s <<< FAILURE! -- in com.clienteservice.service.ClienteServiceTest
+com.clienteservice.service.ClienteServiceTest.deveRetornarClientesPaginados -- Time elapsed: 0.030 s <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "com.clienteservice.model.PaginationResponse.getContent()" because "response" is null
+	at com.clienteservice.service.ClienteServiceTest.deveRetornarClientesPaginados(ClienteServiceTest.java:42)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+
