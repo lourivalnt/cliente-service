@@ -1,4 +1,4 @@
-package com.clienteservice.model;
+package com.clienteservice.pagination;
 
 import lombok.Builder;
 import lombok.Data;

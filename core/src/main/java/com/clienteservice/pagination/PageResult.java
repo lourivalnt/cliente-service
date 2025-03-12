@@ -1,4 +1,4 @@
-package com.clienteservice.model;
+package com.clienteservice.pagination;
 
 import lombok.Builder;
 import lombok.Data;
@@ -7,7 +7,7 @@ import java.util.List;
 
 @Data
 @Builder
-public class PaginationResponse<T> {
+public class PageResult<T> {
     private List<T> content;
     private int totalPages;
     private long totalElements;

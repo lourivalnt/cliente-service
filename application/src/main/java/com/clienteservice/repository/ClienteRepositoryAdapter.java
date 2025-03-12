@@ -1,17 +1,18 @@
 package com.clienteservice.repository;
 
 import com.clienteservice.dto.ClienteDTO;
-import com.clienteservice.dto.EnderecoDTO;
 import com.clienteservice.mapper.ClienteMapper;
 import com.clienteservice.model.Cliente;
-import com.clienteservice.model.Endereco;
-import com.clienteservice.model.PaginationResponse;
+import com.clienteservice.pagination.PageResult;
 import com.clienteservice.ports.ClienteRepositoryPort;
 import com.clienteservice.mapper.ClienteRowMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import java.util.List;
@@ -58,7 +59,12 @@ public class ClienteRepositoryAdapter implements ClienteRepositoryPort {
 
     // Método com paginação
     @Override
-    public PaginationResponse<Cliente> listarClientesComPaginacao(int page, int pageSize, String sortBy, boolean ascending) {
+    public PageResult<Cliente> listarClientesComPaginacao(
+            int page,
+            int pageSize,
+            String sortBy,
+            boolean ascending) {
+
         // Calcula offset
         int offset = page * pageSize;
 
@@ -107,7 +113,8 @@ public class ClienteRepositoryAdapter implements ClienteRepositoryPort {
         Integer totalElements = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM cliente", Integer.class);
         int totalPages = (int) Math.ceil((double) totalElements / pageSize);
 
-        return PaginationResponse.<Cliente>builder()
+        // Retorna PageResult
+        return PageResult.<Cliente>builder()
                 .content(clientes)
                 .totalPages(totalPages)
                 .totalElements(totalElements)

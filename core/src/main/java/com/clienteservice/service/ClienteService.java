@@ -2,7 +2,8 @@ package com.clienteservice.service;
 
 import com.clienteservice.exception.ClienteNaoEncontradoException;
 import com.clienteservice.model.Cliente;
-import com.clienteservice.model.PaginationResponse;
+import com.clienteservice.pagination.PageResult;
+import com.clienteservice.pagination.PaginationRequest;
 import com.clienteservice.ports.ClienteRepositoryPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,7 +18,7 @@ public class ClienteService {
         return clienteRepository.buscarTodos();
     }
 
-    public PaginationResponse<Cliente> listarClientesComPaginacao(
+    public PageResult<Cliente> listarClientesComPaginacao(
             int page,
             int pageSize,
             String sortBy,

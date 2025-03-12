@@ -3,8 +3,8 @@ package com.clienteservice.controller;
 import com.clienteservice.dto.ClienteDTO;
 import com.clienteservice.mapper.ClienteMapper;
 import com.clienteservice.model.Cliente;
-import com.clienteservice.model.PaginationRequest;
-import com.clienteservice.model.PaginationResponse;
+import com.clienteservice.pagination.PaginationRequest;
+import com.clienteservice.pagination.PageResult;
 import com.clienteservice.service.ClienteService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -17,7 +17,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/clientes")
@@ -37,36 +36,30 @@ public class ClienteController {
     @GetMapping("/paginacao")
     @Operation(summary = "Listar todos os clientes", description = "Retorna uma lista de todos os clientes cadastrados.")
     @ApiResponse(responseCode = "200", description = "Clientes encontrados com sucesso.")
-    public ResponseEntity<PaginationResponse<ClienteDTO>> listarClientesComPaginacao(
+    public ResponseEntity<PageResult<ClienteDTO>> listarClientesComPaginacao(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int pageSize,
-            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "nome") String sortBy,
             @RequestParam(defaultValue = "true") boolean ascending) {
 
-        // Cria request de paginação
-        PaginationRequest pagination = PaginationRequest.builder()
-                .page(page)
-                .pageSize(pageSize)
-                .sortBy(sortBy)
-                .ascending(ascending)
-                .build();
-
-        PaginationResponse<Cliente> response = clienteService.listarClientesComPaginacao(page, pageSize, sortBy, ascending);
+        // Chama o service (core)
+        PageResult<Cliente> result = clienteService.listarClientesComPaginacao(page, pageSize, sortBy, ascending);
 
         // Converte entidades para DTOs
-        List<ClienteDTO> dtos = response.getContent().stream()
+        List<ClienteDTO> dtos = result.getContent().stream()
                 .map(clienteMapper::toDTO)
                 .toList();
 
-        PaginationResponse<ClienteDTO> dtoResponse = PaginationResponse.<ClienteDTO>builder()
+        // Monta resposta paginada com DTOs
+        PageResult<ClienteDTO> dtoResult = PageResult.<ClienteDTO>builder()
                 .content(dtos)
-                .totalPages(response.getTotalPages())
-                .totalElements(response.getTotalElements())
-                .currentPage(response.getCurrentPage())
-                .pageSize(response.getPageSize())
+                .totalPages(result.getTotalPages())
+                .totalElements(result.getTotalElements())
+                .currentPage(result.getCurrentPage())
+                .pageSize(result.getPageSize())
                 .build();
 
-        return ResponseEntity.ok(dtoResponse);
+        return ResponseEntity.ok(dtoResult);
     }
 
     @GetMapping("/{id}")

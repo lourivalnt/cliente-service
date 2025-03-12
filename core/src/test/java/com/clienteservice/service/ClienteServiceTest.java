@@ -3,8 +3,8 @@
 //import com.clienteservice.exception.ClienteNaoEncontradoException;
 //import com.clienteservice.model.Cliente;
 //import com.clienteservice.model.Endereco;
-//import com.clienteservice.model.PaginationRequest;
-//import com.clienteservice.model.PaginationResponse;
+//import com.clienteservice.pagination.PaginationRequest;
+//import com.clienteservice.pagination.PaginationResponse;
 //import com.clienteservice.ports.ClienteRepositoryPort;
 //import org.junit.jupiter.api.Test;
 //import org.junit.jupiter.api.extension.ExtendWith;
