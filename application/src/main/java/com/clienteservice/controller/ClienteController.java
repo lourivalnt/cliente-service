@@ -90,6 +90,34 @@ public class ClienteController {
         return new ResponseEntity<>(ClienteMapper.INSTANCE.toDTO(clienteSalvo), headers, HttpStatus.CREATED);
     }
 
+    // ClienteController.java (application)
+    @PutMapping("/{id}")
+    @Operation(summary = "Atualizar cliente existente")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Cliente atualizado com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos"),
+            @ApiResponse(responseCode = "404", description = "Cliente não encontrado")
+    })
+    public ResponseEntity<ClienteDTO> atualizarCliente(
+            @PathVariable Long id,
+            @Valid @RequestBody ClienteDTO dto) {
+
+        // Define o ID no DTO para garantir que o cliente correto seja atualizado
+        dto.setId(id);
+        if (dto.getEndereco() != null) {
+            dto.getEndereco().setId(dto.getEndereco().getId());
+        }
+
+        // Converte DTO para entidade
+        Cliente cliente = clienteMapper.toEntity(dto);
+
+        // Chama o service para atualizar o cliente
+        Cliente clienteAtualizado = clienteService.atualizarCliente(cliente);
+
+        // Retorna DTO convertido com status 200 (OK)
+        return ResponseEntity.ok(clienteMapper.toDTO(clienteAtualizado));
+    }
+
     @DeleteMapping("/{id}")
     @Operation(summary = "Excluir cliente", description = "Exclui um cliente com base no ID fornecido.")
     @ApiResponses({

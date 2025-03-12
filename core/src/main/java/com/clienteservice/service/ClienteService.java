@@ -1,5 +1,6 @@
 package com.clienteservice.service;
 
+import com.clienteservice.exception.ClienteJaExisteException;
 import com.clienteservice.exception.ClienteNaoEncontradoException;
 import com.clienteservice.model.Cliente;
 import com.clienteservice.pagination.PageResult;
@@ -32,7 +33,21 @@ public class ClienteService {
     }
 
     public Cliente cadastrarCliente(Cliente cliente) {
-        // Aqui pode adicionar validações adicionais antes de salvar
+        // Validações adicionais podem ser feitas aqui (ex: CPF único)
+        if (clienteRepository.existePorId(cliente.getId())) {
+            throw new ClienteJaExisteException(cliente.getId());
+        }
+
+        return clienteRepository.salvar(cliente);
+    }
+
+    public Cliente atualizarCliente(Cliente cliente) {
+        // Verifica se o cliente existe
+        if (!clienteRepository.existePorId(cliente.getId())) {
+            throw new ClienteNaoEncontradoException(cliente.getId());
+        }
+
+        // Atualiza o cliente no repositório
         return clienteRepository.salvar(cliente);
     }
 

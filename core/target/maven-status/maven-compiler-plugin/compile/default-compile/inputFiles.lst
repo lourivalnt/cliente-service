@@ -1,3 +1,4 @@
+/home/llinard/Dev/workspace/cliente-service/core/src/main/java/com/clienteservice/exception/ClienteJaExisteException.java
 /home/llinard/Dev/workspace/cliente-service/core/src/main/java/com/clienteservice/exception/ClienteNaoEncontradoException.java
 /home/llinard/Dev/workspace/cliente-service/core/src/main/java/com/clienteservice/exception/NegocioException.java
 /home/llinard/Dev/workspace/cliente-service/core/src/main/java/com/clienteservice/model/Cliente.java

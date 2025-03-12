@@ -162,37 +162,71 @@ public class ClienteRepositoryAdapter implements ClienteRepositoryPort {
     }
 
     @Override
-    @CachePut(value = "clientes", key = "'cliente:' + #cliente.id")
+    @CachePut(value = "clientes", key = "'cliente:' + #cliente.id") // Atualiza cache após salvar/atualizar
     public Cliente salvar(Cliente cliente) {
         ClienteDTO dto = clienteMapper.toDTO(cliente);
-        if (dto.getId() == null) {
-            // Insere novo cliente
-            String sqlEndereco = "INSERT INTO endereco (cep, rua, numero, bairro, complemento, cidade, uf) VALUES (?, ?, ?, ?, ?, ?, ?)";
-            jdbcTemplate.update(sqlEndereco,
-                    dto.getEndereco().getCep(),
-                    dto.getEndereco().getRua(),
-                    dto.getEndereco().getNumero(),
-                    dto.getEndereco().getBairro(),
-                    dto.getEndereco().getComplemento(),
-                    dto.getEndereco().getCidade(),
-                    dto.getEndereco().getUf());
 
-            Long enderecoId = jdbcTemplate.queryForObject("SELECT LASTVAL()", Long.class);
-
-            String sqlCliente = "INSERT INTO cliente (nome, idade, cpf, profissao, endereco_id) VALUES (?, ?, ?, ?, ?)";
-            jdbcTemplate.update(sqlCliente,
-                    dto.getNome(),
-                    dto.getIdade(),
-                    dto.getCpf(),
-                    dto.getProfissao(),
-                    enderecoId);
-
-            Long clienteId = jdbcTemplate.queryForObject("SELECT LASTVAL()", Long.class);
-            dto.setId(clienteId);
-            cliente.setId(clienteId);
+        // Verifica se o cliente já existe (ID não nulo)
+        if (dto.getId() == null || !existePorId(dto.getId())) {
+            return inserirNovoCliente(dto); // Insere novo cliente
         } else {
-            // Atualiza cliente existente
-            String sqlEndereco = "UPDATE endereco SET cep = ?, rua = ?, numero = ?, bairro = ?, complemento = ?, cidade = ?, uf = ? WHERE id = ?";
+            return atualizarClienteExistente(dto); // Atualiza cliente existente
+        }
+    }
+
+
+    private Cliente inserirNovoCliente(ClienteDTO dto) {
+        // Insere o endereço primeiro
+        String sqlEndereco = """
+            INSERT INTO endereco (cep, rua, numero, bairro, complemento, cidade, uf)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            """;
+        jdbcTemplate.update(sqlEndereco,
+                dto.getEndereco().getCep(),
+                dto.getEndereco().getRua(),
+                dto.getEndereco().getNumero(),
+                dto.getEndereco().getBairro(),
+                dto.getEndereco().getComplemento(),
+                dto.getEndereco().getCidade(),
+                dto.getEndereco().getUf());
+
+        // Recupera o ID do endereço recém-inserido
+        Long enderecoId = jdbcTemplate.queryForObject("SELECT LASTVAL()", Long.class);
+
+        // Insere o cliente com o ID do endereço
+        String sqlCliente = """
+            INSERT INTO cliente (nome, idade, cpf, profissao, endereco_id)
+            VALUES (?, ?, ?, ?, ?)
+            """;
+        jdbcTemplate.update(sqlCliente,
+                dto.getNome(),
+                dto.getIdade(),
+                dto.getCpf(),
+                dto.getProfissao(),
+                enderecoId);
+
+        // Recupera o ID do cliente recém-inserido
+        Long clienteId = jdbcTemplate.queryForObject("SELECT LASTVAL()", Long.class);
+
+        // Define os IDs no cliente antes de retornar
+        dto.setId(clienteId);
+        dto.getEndereco().setId(enderecoId);
+
+        return clienteMapper.toEntity(dto);
+    }
+
+    private Cliente atualizarClienteExistente(ClienteDTO dto) {
+        // Recupera o ID do endereço associado ao cliente
+        Long enderecoId = jdbcTemplate.queryForObject(
+                "SELECT endereco_id FROM cliente WHERE id = ?", Long.class, dto.getId());
+
+        // Atualiza o endereço (se existir)
+        if (enderecoId != null) {
+            String sqlEndereco = """
+                UPDATE endereco
+                SET cep = ?, rua = ?, numero = ?, bairro = ?, complemento = ?, cidade = ?, uf = ?
+                WHERE id = ?
+                """;
             jdbcTemplate.update(sqlEndereco,
                     dto.getEndereco().getCep(),
                     dto.getEndereco().getRua(),
@@ -201,18 +235,27 @@ public class ClienteRepositoryAdapter implements ClienteRepositoryPort {
                     dto.getEndereco().getComplemento(),
                     dto.getEndereco().getCidade(),
                     dto.getEndereco().getUf(),
-                    dto.getEndereco().getId());
+                    enderecoId);
 
-            String sqlCliente = "UPDATE cliente SET nome = ?, idade = ?, cpf = ?, profissao = ?, endereco_id = ? WHERE id = ?";
-            jdbcTemplate.update(sqlCliente,
-                    dto.getNome(),
-                    dto.getIdade(),
-                    dto.getCpf(),
-                    dto.getProfissao(),
-                    dto.getEndereco().getId(),
-                    dto.getId());
+            // Atribui o ID do endereço ao DTO
+            dto.getEndereco().setId(enderecoId);
         }
-        return cliente;
+
+        // Atualiza o cliente
+        String sqlCliente = """
+            UPDATE cliente
+            SET nome = ?, idade = ?, cpf = ?, profissao = ?, endereco_id = ?
+            WHERE id = ?
+            """;
+        jdbcTemplate.update(sqlCliente,
+                dto.getNome(),
+                dto.getIdade(),
+                dto.getCpf(),
+                dto.getProfissao(),
+                dto.getEndereco().getId(),
+                dto.getId());
+
+        return clienteMapper.toEntity(dto);
     }
 
     @Override

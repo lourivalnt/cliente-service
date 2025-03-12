@@ -199,19 +199,6 @@ cliente-service/
 
 ---
 
-## **Licença**
-
-Este projeto está licenciado sob a **MIT License**. Consulte [LICENSE](LICENSE) para mais detalhes.
-
----
-
-### **Contato**
-
-- Email: seu-email@example.com
-- GitHub: [https://github.com/seu-usuario](https://github.com/seu-usuario)
-
----
-
 **Principais Atualizações**:
 - Integração com Redis para cache.
 - Uso de DTOs e mapeamento com MapStruct/Lombok.

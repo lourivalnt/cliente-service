@@ -5,6 +5,7 @@ com/clienteservice/pagination/PageResult.class
 com/clienteservice/ports/ClienteRepositoryPort.class
 com/clienteservice/pagination/PaginationRequest$PaginationRequestBuilder.class
 com/clienteservice/service/ClienteService.class
+com/clienteservice/exception/ClienteJaExisteException.class
 com/clienteservice/model/Cliente.class
 com/clienteservice/pagination/PageResult$PageResultBuilder.class
 com/clienteservice/exception/NegocioException.class
