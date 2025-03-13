@@ -165,6 +165,15 @@ class ClienteServiceTest {
        assertThrows(ClienteJaExisteException.class, () -> clienteService.cadastrarCliente(cliente));
     }
 
+    @Test
+    void testClienteNaoEncontradoException() {
+        Cliente cliente = getCliente();
+
+        when(clienteRepository.existePorId(cliente.getId())).thenReturn(false);
+
+        assertThrows(ClienteNaoEncontradoException.class, () -> clienteService.atualizarCliente(cliente));
+    }
+
     private static Cliente getCliente() {
         Endereco endereco = new Endereco(1L, "12345-678", "Rua A", "100", "Centro", "Apto 10", "São Paulo", "SP");
         Cliente cliente = new Cliente(1L, "João Silva", 30, "123.456.789-00", "Engenheiro", endereco);
