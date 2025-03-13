@@ -162,7 +162,7 @@ public class ClienteRepositoryAdapter implements ClienteRepositoryPort {
     }
 
     @Override
-    @CachePut(value = "clientes", key = "'cliente:' + #cliente.id") // Atualiza cache após salvar/atualizar
+//    @CachePut(value = "clientes", key = "'cliente:' + #cliente.id") // Atualiza cache após salvar/atualizar
     public Cliente salvar(Cliente cliente) {
         ClienteDTO dto = clienteMapper.toDTO(cliente);
 

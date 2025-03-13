@@ -26,6 +26,7 @@ public class ClienteController {
     private final ClienteMapper clienteMapper;
 
     @GetMapping
+    @Operation(summary = "Listar todos os clientes sem paginação", description = "Retorna uma lista de todos os clientes cadastrados.")
     public ResponseEntity<List<ClienteDTO>> listarClientes() {
         List<ClienteDTO> clientes = clienteService.listarClientes().stream()
                 .map(ClienteMapper.INSTANCE::toDTO)
@@ -34,7 +35,7 @@ public class ClienteController {
     }
 
     @GetMapping("/paginacao")
-    @Operation(summary = "Listar todos os clientes", description = "Retorna uma lista de todos os clientes cadastrados.")
+    @Operation(summary = "Listar todos os clientes", description = "Listar clientes (com paginação via query params: ?page=1&size=10)")
     @ApiResponse(responseCode = "200", description = "Clientes encontrados com sucesso.")
     public ResponseEntity<PageResult<ClienteDTO>> listarClientesComPaginacao(
             @RequestParam(defaultValue = "0") int page,
@@ -90,7 +91,6 @@ public class ClienteController {
         return new ResponseEntity<>(ClienteMapper.INSTANCE.toDTO(clienteSalvo), headers, HttpStatus.CREATED);
     }
 
-    // ClienteController.java (application)
     @PutMapping("/{id}")
     @Operation(summary = "Atualizar cliente existente")
     @ApiResponses({

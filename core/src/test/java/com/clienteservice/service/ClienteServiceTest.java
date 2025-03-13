@@ -1,5 +1,6 @@
 package com.clienteservice.service;
 
+import com.clienteservice.exception.ClienteJaExisteException;
 import com.clienteservice.exception.ClienteNaoEncontradoException;
 import com.clienteservice.model.Cliente;
 import com.clienteservice.model.Endereco;
@@ -27,15 +28,33 @@ class ClienteServiceTest {
     @Mock
     private ClienteRepositoryPort clienteRepository;
 
-//    @Test
-//    void deveRetornarClientesPaginados() {
-//
-//        PageResult<Cliente> response = clienteService.listarClientesComPaginacao(
-//                0, 10, "id", true);
-//
-//        assertEquals(10, response.getContent().size());
-//        assertEquals(5, response.getTotalPages());
-//    }
+    @Test
+    void deveRetornarClientesPaginados() {
+
+//        Criar objeto PageResult com dados Mockados
+        PageResult<Cliente> pageResult = new PageResult<>(
+                List.of(new Cliente(), new Cliente()),
+                1,
+                2L,
+                0,
+                2
+        );
+
+//         Mockar o método listarClientesComPaginacao do clienteRepository
+        when(clienteRepository.listarClientesComPaginacao(0, 2, "nome", true))
+                .thenReturn(pageResult);
+
+//         Chamar o método listarClientesComPaginacao do clienteService
+        PageResult<Cliente> response = clienteService.listarClientesComPaginacao(
+                0, 2, "nome", true);
+
+        assertEquals(pageResult.getContent(), response.getContent());
+        assertEquals(pageResult.getTotalPages(), response.getTotalPages());
+        assertEquals(pageResult.getTotalElements(), response.getTotalElements());
+        assertEquals(pageResult.getCurrentPage(), response.getCurrentPage());
+        assertEquals(pageResult.getPageSize(), response.getPageSize());
+
+    }
 
     @Test
     void testListarClientes() {
@@ -65,8 +84,8 @@ class ClienteServiceTest {
     @Test
     void testBuscarClientePorId() {
         Long id = 1L;
-        Endereco endereco = new Endereco(1L, "12345-678", "Rua A", "100", "Centro", "Apto 10", "São Paulo", "SP");
-        Cliente cliente = new Cliente(id, "João Silva", 30, "123.456.789-00", "Engenheiro", endereco);
+        Cliente cliente = getCliente();
+
         when(clienteRepository.buscarPorId(id)).thenReturn(Optional.of(cliente));
 
         Cliente resultado = clienteService.buscarClientePorId(id);
@@ -88,11 +107,9 @@ class ClienteServiceTest {
 
     @Test
     void testCadastrarCliente() {
-        Endereco endereco = new Endereco(1L, "12345-678", "Rua A", "100", "Centro", "Apto 10", "São Paulo", "SP");
-        Cliente cliente = new Cliente(null, "João Silva", 30, "123.456.789-00", "Engenheiro", endereco);
-        Cliente clienteSalvo = new Cliente(1L, "João Silva", 30, "123.456.789-00", "Engenheiro", endereco);
+        Cliente cliente = getCliente();
 
-        when(clienteRepository.salvar(cliente)).thenReturn(clienteSalvo);
+        when(clienteRepository.salvar(cliente)).thenReturn(cliente);
 
         Cliente resultado = clienteService.cadastrarCliente(cliente);
 
@@ -105,27 +122,54 @@ class ClienteServiceTest {
 
     @Test
     void testExcluirCliente() {
-        // Arrange
         Long id = 1L;
         when(clienteRepository.existePorId(id)).thenReturn(true);
 
-        // Act
         clienteService.excluirCliente(id);
 
-        // Assert
         verify(clienteRepository, times(1)).existePorId(id);
         verify(clienteRepository, times(1)).excluir(id);
     }
 
     @Test
     void testExcluirCliente_NaoEncontrado() {
-        // Arrange
         Long id = 99L;
         when(clienteRepository.existePorId(id)).thenReturn(false);
 
-        // Act & Assert
         assertThrows(ClienteNaoEncontradoException.class, () -> clienteService.excluirCliente(id));
         verify(clienteRepository, times(1)).existePorId(id);
         verify(clienteRepository, never()).excluir(id); // Verifica que o método excluir nunca foi chamado
     }
+
+    @Test
+    void atualizarCliente() {
+        Cliente cliente = getCliente();
+
+        when(clienteRepository.existePorId(cliente.getId())).thenReturn(true);
+        when(clienteRepository.salvar(cliente)).thenReturn(cliente);
+
+        Cliente result = clienteService.atualizarCliente(cliente);
+
+        assertNotNull(result);
+        assertEquals(cliente.getId(), result.getId());
+
+        verify(clienteRepository, times(1)).salvar(cliente);
+
+    }
+
+    @Test
+    void testClienteJaExisteException() {
+       Cliente cliente = getCliente();
+       when(clienteRepository.existePorId(cliente.getId())).thenReturn(true);
+
+       assertThrows(ClienteJaExisteException.class, () -> clienteService.cadastrarCliente(cliente));
+    }
+
+    private static Cliente getCliente() {
+        Endereco endereco = new Endereco(1L, "12345-678", "Rua A", "100", "Centro", "Apto 10", "São Paulo", "SP");
+        Cliente cliente = new Cliente(1L, "João Silva", 30, "123.456.789-00", "Engenheiro", endereco);
+
+        return cliente;
+    }
+
 }
