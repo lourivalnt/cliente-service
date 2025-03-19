@@ -4,7 +4,6 @@ import com.clienteservice.exception.ClienteJaExisteException;
 import com.clienteservice.exception.ClienteNaoEncontradoException;
 import com.clienteservice.model.Cliente;
 import com.clienteservice.pagination.PageResult;
-import com.clienteservice.pagination.PaginationRequest;
 import com.clienteservice.ports.ClienteRepositoryPort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

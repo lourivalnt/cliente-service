@@ -3,7 +3,6 @@ package com.clienteservice.controller;
 import com.clienteservice.dto.ClienteDTO;
 import com.clienteservice.mapper.ClienteMapper;
 import com.clienteservice.model.Cliente;
-import com.clienteservice.pagination.PaginationRequest;
 import com.clienteservice.pagination.PageResult;
 import com.clienteservice.service.ClienteService;
 import io.swagger.v3.oas.annotations.Operation;
